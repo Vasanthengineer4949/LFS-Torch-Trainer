@@ -1,0 +1,29 @@
+# LFS Trainer
+
+log at each step and implement getting arguments at each step
+# set device
+# dataloaders - done
+# optimizer - fetch_optimizer - done
+# scheduler - fetch_scheduler - done
+# loss - set and monitor - fetch_loss and monitor_loss - fetch_loss done
+
+# model forward - done
+# model training loop:
+    - train one epoch - done
+    - train one step - inside this all the scheduler update optimizer backprop should be present - done
+====================================================================================================
+# eval step - done
+# model saving - done
+# tensorboard - monitor metric and loss - done
+# save as onnx
+# earlystopping
+# checkpointing - done
+# testing
+# documentation
+# examples
+====================================================================================================
+# multigpu - DDP
+# metric - set and monitor - fetch_metric
+====================================================================================================
+
+CONVERT TRAINER_UTILS INTO ARGUMENTS
