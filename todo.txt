@@ -17,9 +17,9 @@ log at each step and implement getting arguments at each step
 # tensorboard - monitor metric and loss - done
 # checkpointing - done
 # documentation - done
-# save as onnx
-# need to make onnx, saving process, tensorboard, process to be written in train_utils file
-# testing 
+# save as onnx - done
+# need to make onnx, saving process, tensorboard, process to be written in train_utils file - done
+# testing - done
 # examples
 # CONVERT TRAINER UTILS INTO AN ARGUMENT 
 # Write Readme.MD

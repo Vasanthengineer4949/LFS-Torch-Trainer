@@ -35,12 +35,13 @@ lfstrainer = LFSTrainer(
     optimizer_name="adam",
     scheduler_name="step_lr",
     loss_name="cross_entropy",
-    num_epochs=2,
+    num_epochs=1,
     eval_model=True,
-    save_model=False,
-    model_save_folder="output/",
-    save_model_at_each_epoch=False,
-    writer_name="tensorboard"
+    save_model=True,
+    model_save_folder="output/epoch_wise/",
+    save_model_at_each_epoch=True,
+    writer_name="tensorboard",
+    save_as_onnx=True
 )
 
 lfstrainer.train()
