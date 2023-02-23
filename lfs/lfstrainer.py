@@ -1,4 +1,3 @@
-# Input comes as torch datasets for train and validation also add test if present
 import lfs.config as config
 import lfs.train_utils as train_utils
 import torch
@@ -6,7 +5,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-# from lfs.utils.lfsdataloader import LFSDataLoader
 
 class LFSTrainer(nn.Module):
     
@@ -28,6 +26,26 @@ class LFSTrainer(nn.Module):
         save_model_at_each_epoch : bool = False,
         *args, 
         **kwargs):
+
+        '''
+        A wrapper class for torch training loop and the supplements required in the loop
+        
+        Input:
+        model: nn.Module: Class of the model to be trained. Default: None
+        train_dataloader: DataLoader : Training DataLoader. Default : None
+        test_dataloader: DataLoader : Testing DataLoader. Default: None
+        val_dataloader: DataLoader : Validation DataLoader. Default: None
+        device: torch.device(): Device to be used by torch. Default: It will find if cuda or cpu
+        optimizer_name: str : Name of the optimizer required. Default: "adam"
+        scheduler_name: str : Name of the scheduler required. Default: "steplr"
+        loss_name : str : Name of the loss function required. Default: "cross_entropy"
+        writer_name : str : Name of the writer to be used. Default: "tensorboard"
+        num_epochs : int : Number of epochs to be trained for. Default: 5
+        eval_model : bool : To check if the model needs to be validated. Default: False
+        save_model : bool : To check if the model needs to be saved. Default: False
+        model_save_folder: str : Path to store the model to be saved. Default: None
+        save_model_at_each_epoch : bool : To check if the model needs to be saved at each end of epoch. Default: False  
+        '''
 
         super().__init__()
 

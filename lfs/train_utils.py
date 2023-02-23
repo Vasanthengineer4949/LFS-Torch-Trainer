@@ -6,12 +6,13 @@ from lfs.utils import lfsoptimizer, lfsscheduler, lfslosses
 
 class LFSTrainerUtils(nn.Module):
 
-    '''
-    A Trainer utils module from which all supplements such as optimizer, scheduler, loss,
-    etc... is provided to the Trainer
-    '''
-
     def __init__(self, *args, **kwargs) -> None:
+
+        '''
+        A Trainer utils module from which all supplements such as optimizer, scheduler, loss,
+        etc... is provided to the Trainer
+        '''
+        
         super().__init__(*args, **kwargs)
 
     def fetch_optimizer(

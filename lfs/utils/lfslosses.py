@@ -5,18 +5,21 @@ import torch.nn.functional as F
 
 class LFSLosses:
     
-    '''
-    A class which contains a list of losses that checks the loss_name and then returns 
-    the loss function required accordingly from the get_req_loss_func function.
-
-    Input:
-    loss_name : str : Name of the loss function required. Input comes from LFSTrainerUtils class fetch_lossfunc() function. Eg: cross_entropy, bce, mse, etc...
-    '''
+    
 
     def __init__(
         self,
         loss_name
         ):
+        
+        '''
+        A class which contains a list of losses that checks the loss_name and then returns 
+        the loss function required accordingly from the get_req_loss_func function.
+
+        Input:
+        loss_name : str : Name of the loss function required. Input comes from LFSTrainerUtils class fetch_lossfunc() function. Eg: cross_entropy, bce, mse, etc...
+        '''
+        
         self.loss_name=loss_name
 
     def get_req_lossfunc(self):

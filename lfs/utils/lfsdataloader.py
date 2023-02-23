@@ -6,16 +6,16 @@ from torch.utils.data import DataLoader, SequentialSampler, RandomSampler, Batch
 
 class LFSDataLoader():
 
-    '''
-    A class which contains the functions to create dataloader for the train, test and val datasets.
-    
-    Input:
-    train_dataset: Training data to be used
-    val_dataset: Validation data to be used. Default: None
-    test_dataset: Testing data to be used. Defult: None
-    '''
-
     def __init__(self, train_dataset, val_dataset=None, test_dataset=None, *args, **kwargs):
+
+        '''
+        A class which contains the functions to create dataloader for the train, test and val datasets.
+        
+        Input:
+        train_dataset: Training data to be used
+        val_dataset: Validation data to be used. Default: None
+        test_dataset: Testing data to be used. Defult: None
+        '''
 
         super().__init__(*args, **kwargs)
         self.train_data = train_dataset

@@ -6,21 +6,21 @@ import torch.nn.functional as F
 
 class LFSOptimizers:
 
-    '''
-    A class which contains a list of optimizers that checks the optimizer_name and then returns 
-    the optimizer required accordingly from the get_req_optimizer function.
-
-    Input: Input comes from LFSTrainerUtils class fetch_optimizer() function.
-    optimizer_name : str : Name of the optimizer required. Eg: adam, adamw, etc...
-    model_params : nn.Module.parameters() : Model parameters to update
-    '''
-
     def __init__(
         self, 
         optimizer_name:str=config.OPTIMIZER_NAME,
         model_params:nn.Module.parameters=None
         ):
 
+        '''
+        A class which contains a list of optimizers that checks the optimizer_name and then returns 
+        the optimizer required accordingly from the get_req_optimizer function.
+
+        Input: Input comes from LFSTrainerUtils class fetch_optimizer() function.
+        optimizer_name : str : Name of the optimizer required. Eg: adam, adamw, etc...
+        model_params : nn.Module.parameters() : Model parameters to update
+        '''
+        
         self.optimizer_name = optimizer_name
         self.model_params = model_params
         self.lr = config.LEARNING_RATE

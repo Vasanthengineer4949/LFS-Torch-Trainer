@@ -6,20 +6,23 @@ import torch.optim.lr_scheduler as schedulers
 
 class LFSScheduler:
 
-    '''
-    A class which contains a list of schedulers that checks the scheduler_name and then returns 
-    the optimizer required accordingly from the get_req_scheduler function.
-
-    Input: Input comes from LFSTrainerUtils class fetch_scheduler() function.
-    scheduler_name : str : Name of the scheduler required. Eg: steplr, lr_on_plateau, etc...
-    optimizer : torch.optim.optimizer_using : Object of the optimizer being used
-    '''
+    
 
     def __init__(
         self,
         scheduler_name:str=config.SCHEDULER_NAME,
         optimizer:torch.optim=None
         ):
+
+        '''
+        A class which contains a list of schedulers that checks the scheduler_name and then returns 
+        the optimizer required accordingly from the get_req_scheduler function.
+
+        Input: Input comes from LFSTrainerUtils class fetch_scheduler() function.
+        scheduler_name : str : Name of the scheduler required. Eg: steplr, lr_on_plateau, etc...
+        optimizer : torch.optim.optimizer_using : Object of the optimizer being used
+        '''
+        
         self.scheduler_name = scheduler_name
         self.optimizer = optimizer
         self.step_size = 30
