@@ -6,6 +6,15 @@ from torch.utils.data import DataLoader, SequentialSampler, RandomSampler, Batch
 
 class LFSDataLoader():
 
+    '''
+    A class which contains the functions to create dataloader for the train, test and val datasets.
+    
+    Input:
+    train_dataset: Training data to be used
+    val_dataset: Validation data to be used. Default: None
+    test_dataset: Testing data to be used. Defult: None
+    '''
+
     def __init__(self, train_dataset, val_dataset=None, test_dataset=None, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -15,6 +24,16 @@ class LFSDataLoader():
 
     def train_data_loader(self, batch_size=config.TRAIN_BATCH_SIZE, sampler=config.TRAIN_SAMPLER):
 
+        '''
+        A function which is used to return the training dataloader object
+        
+        Input:
+        train_data: Training data to sample and batch. From self
+        batch_size: int : Size of each batch. Default : 64
+        sampler: Sampler to be used for sampling the data. Default : random
+        
+        Returns the train_dataloader object
+        '''
         if sampler==config.TRAIN_SAMPLER:
             train_sampler = RandomSampler(self.train_data)
 
@@ -32,6 +51,17 @@ class LFSDataLoader():
 
     def val_data_loader(self, batch_size=config.TEST_VAL_BATCH_SIZE, sampler=config.TEST_VAL_SAMPLER):
 
+        '''
+        A function which is used to return the validation dataloader object
+        
+        Input:
+        val_data: Validation data to sample and batch. From self
+        batch_size: int : Size of each batch. Default : 32
+        sampler: Sampler to be used for sampling the data. Default : sequential
+        
+        Returns the val_dataloader object
+        '''
+
         if sampler==config.TEST_VAL_SAMPLER:
             val_sampler = SequentialSampler(self.val_data)
 
@@ -48,6 +78,17 @@ class LFSDataLoader():
         return val_dataloader
 
     def test_data_loader(self, batch_size=config.TEST_VAL_BATCH_SIZE, sampler=config.TEST_VAL_SAMPLER):
+
+        '''
+        A function which is used to return the testing dataloader object
+        
+        Input:
+        test_data: Testing data to sample and batch. From self
+        batch_size: int : Size of each batch. Default : 32
+        sampler: Sampler to be used for sampling the data. Default : sequential
+        
+        Returns the test_dataloader object
+        '''
 
         if sampler==config.TEST_VAL_SAMPLER:
             test_sampler = SequentialSampler(self.test_data)
