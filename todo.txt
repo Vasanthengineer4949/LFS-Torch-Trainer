@@ -22,7 +22,9 @@ log at each step and implement getting arguments at each step
 # testing 
 # examples
 # CONVERT TRAINER UTILS INTO AN ARGUMENT 
+# Write Readme.MD
 ====================================================================================================
 # multigpu - DDP
 # metric - set and monitor - fetch_metric
 ====================================================================================================
+# Convert as package 
