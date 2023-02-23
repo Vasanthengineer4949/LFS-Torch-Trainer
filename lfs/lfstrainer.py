@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
+import numpy as np
 
 class LFSTrainer(nn.Module):
     
@@ -24,6 +24,7 @@ class LFSTrainer(nn.Module):
         save_model : bool = False,
         model_save_folder : str = None,
         save_model_at_each_epoch : bool = False,
+        save_as_onnx : bool =False,
         *args, 
         **kwargs):
 
@@ -45,17 +46,19 @@ class LFSTrainer(nn.Module):
         save_model : bool : To check if the model needs to be saved. Default: False
         model_save_folder: str : Path to store the model to be saved. Default: None
         save_model_at_each_epoch : bool : To check if the model needs to be saved at each end of epoch. Default: False  
+        save_as_onnx : bool : To check if the model needs to be saved as onnx file
+        verify_onnx_model : bool To check if the saved onnx_model needs to be verified
         '''
 
         super().__init__()
 
         self.model = model
 
-        self.train_dataloader = train_dataloader # done
-        self.test_dataloader = test_dataloader # done
-        self.val_dataloader = val_dataloader  # done
+        self.train_dataloader = train_dataloader 
+        self.test_dataloader = test_dataloader 
+        self.val_dataloader = val_dataloader  
 
-        self.device = device # done
+        self.device = device 
 
         self.lfs_train_utils = train_utils.LFSTrainerUtils()
 
@@ -77,6 +80,8 @@ class LFSTrainer(nn.Module):
         self.save_model_at_each_epoch = save_model_at_each_epoch
         self.model_save_folder = model_save_folder
         self.writer_name = writer_name
+        self.inp_shape = []
+        self.save_as_onnx = save_as_onnx
         self.args = args
         self.kwargs = kwargs
 
@@ -162,9 +167,14 @@ class LFSTrainer(nn.Module):
         loss: The validation loss at each step
         '''
 
-        # Converting the input data and labels to the torch device specified
+        # Converting the inpinputut data and labels to the torch device specified
         inp = inp.to(self.device)
         labels = labels.to(self.device)
+
+        # Getting a dummy input tensor for onnx 
+        if self.inp_shape == []:
+            self.inp_shape = list(inp.shape)[1:]
+            self.dummy_tensor = torch.randn(self.inp_shape, device=self.device)
 
         try:
             # Getting the outputs from the model by passing the inputs to the model
@@ -206,6 +216,7 @@ class LFSTrainer(nn.Module):
                 raise ValueError("Val Data Loader not provided")
 
     def train(self):
+
         '''
         The wrapper function for the whole training loop
         
@@ -244,27 +255,6 @@ class LFSTrainer(nn.Module):
                 # Printing the training loss at the end of each epoch
                 print("Train Loss at {} epoch is: {}\n======================================================================================================\n".format(epoch, train_loss.item()))
 
-        # Checking if the writer/logger is tensorboard
-        if self.writer_name=="tensorboard":
-
-            # Initializing the SummaryWriter class
-            writer = SummaryWriter()
-
-            # Traversing through the loss in the train_epoch_loss list and if specified True for eval_model then val_epoch_loss as well
-            for loss_write in range(len(train_loss_epoch)):
-
-                # Adding the train_loss as a scalar value along with the epoch number to generate the train_epoch_loss graph
-                writer.add_scalar("Loss/Train", train_loss_epoch[loss_write], loss_write)
-
-                # Checking if there is model validation been performed
-                if self.eval_model==True:
-
-                    # Adding the val_loss as a scalar value along with the epoch number to generate the val_epoch_loss graph
-                    writer.add_scalar("Loss/Val", val_loss_epoch[loss_write], loss_write)
-
-            # train_loss_epoch.clear()
-            # val_loss_epoch.clear()
-
             # Checking if the model needs to be saved
             if self.save_model==True:
 
@@ -276,17 +266,16 @@ class LFSTrainer(nn.Module):
 
                         # Saving the state of model, optimizer, scheduler along with the epoch and the training and validation loss with file_path as:
                         # file_path = folder_path/epoch_[epoch_number]_checkpoint.pth 
-                        torch.save(
-                            {
-                                "model": self.model.state_dict(),
-                                "optimizer": self.optimizer.state_dict(),
-                                "scheduler": self.scheduler.state_dict(),
-                                "epoch": epoch,
-                                "train_loss": train_loss,
-                                "validation_loss": val_loss
-                                },
-                        self.model_save_folder + f"epoch_{epoch}_checkpoint.pth"
-                            )
+                        self.lfs_train_utils.model_save(
+                        file_path=self.model_save_folder+f"epoch_{epoch}_checkpoint.pth",
+                        model = self.model,
+                        optimizer = self.optimizer,
+                        scheduler = self.scheduler,
+                        epoch=epoch,
+                        train_loss=train_loss,
+                        val_loss=val_loss
+                    )
+
                     else:
                         raise ValueError("Model Saving Folder is not provided")
                 else:
@@ -304,17 +293,15 @@ class LFSTrainer(nn.Module):
                 if self.model_save_folder != None:
 
                     # Saving the states of model, optimizer, scheduler along with the epoch, training and validation loss with file_path as:
-                    # fil_path = folder_path/final_checkpoint.pth
-                    torch.save(
-                            {
-                                "model": self.model.state_dict(),
-                                "optimizer": self.optimizer.state_dict(),
-                                "scheduler": self.scheduler.state_dict(),
-                                "epoch": epoch,
-                                "train_loss": train_loss,
-                                "validation_loss": val_loss
-                                },
-                        self.model_save_folder + f"final_checkpoint.pth"
+                    # file_path = folder_path/final_checkpoint.pth
+                    self.lfs_train_utils.model_save(
+                        file_path=self.model_save_folder+"final_checkpoint.pth",
+                        model = self.model,
+                        optimizer = self.optimizer,
+                        scheduler = self.scheduler,
+                        epoch=epoch,
+                        train_loss=train_loss,
+                        val_loss=val_loss
                     )
                 else:
                     raise ValueError("Model Saving Folder is not provided")
@@ -322,13 +309,23 @@ class LFSTrainer(nn.Module):
                 pass
         else:
             pass
-
-
-                        
-                        
         
-    
-            
+        # Checking if the writer/logger is tensorboard
+        if self.writer_name=="tensorboard":
+
+            self.lfs_train_utils.tensorboard_write(
+                train_loss_epoch=train_loss_epoch,
+                val_loss_epoch=val_loss_epoch,
+                evaluate_model=self.eval_model
+            )
 
     
-
+        # To check if the model need be saved as onnx
+        if self.save_as_onnx == True:
+            self.lfs_train_utils.model_save_onnx(
+                file_path=self.model_save_folder+"model.onnx",
+                model=self.model,
+                dummy_input=self.dummy_tensor,
+                input_names=["img_tensors"],
+                output_names=["labels"]
+            )
