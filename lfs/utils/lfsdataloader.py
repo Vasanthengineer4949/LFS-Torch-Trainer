@@ -12,7 +12,7 @@ class LFSDataLoader():
         A class which contains the functions to create dataloader for the train, test and val datasets.
         
         Input:
-        train_dataset: Training data to be used
+        train_dataset: Training data to be used.
         val_dataset: Validation data to be used. Default: None
         test_dataset: Testing data to be used. Defult: None
         '''
