@@ -38,8 +38,11 @@ class LFSLosses:
         if self.loss_name == "cross_entropy":
             return nn.CrossEntropyLoss()
         
-        elif self.loss_name == "bce":
+        elif self.loss_name == "bcewithlogits":
             return nn.BCEWithLogitsLoss()
+        
+        elif self.loss_name == "bce":
+            return nn.BCELoss()
 
         elif self.loss_name == "mse":
             return nn.MSELoss()
