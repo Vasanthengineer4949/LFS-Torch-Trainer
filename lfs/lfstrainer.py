@@ -5,6 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import numpy as np
+import os
+from tqdm import tqdm
 
 class LFSTrainer(nn.Module):
     
@@ -133,6 +135,8 @@ class LFSTrainer(nn.Module):
         epoch_loss: Loss at each epoch
         '''
 
+        self.model.to(self.device)
+
         # Setting the model in training mode
         self.model.train()
 
@@ -140,7 +144,7 @@ class LFSTrainer(nn.Module):
         epoch_loss = 0
 
         # Traversing through the training dataloader
-        for idx, (inp, targets) in enumerate(self.train_dataloader):
+        for idx, (inp, targets) in enumerate(tqdm(self.train_dataloader)):
 
             # Performing the function of each step by calling the train_one_step function
             loss = self.train_one_step(inp, targets)
@@ -202,7 +206,7 @@ class LFSTrainer(nn.Module):
             if self.val_dataloader != None:
 
                 # Traversing through val_dataloader data
-                for idx, (inp, targets) in enumerate(self.val_dataloader):
+                for idx, (inp, targets) in enumerate(tqdm(self.val_dataloader)):
 
                     # Performing validation functions for number of steps by calling the val_one_step
                     val_loss = self.val_one_step(inp, targets)
