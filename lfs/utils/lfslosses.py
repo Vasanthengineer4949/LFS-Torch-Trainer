@@ -46,3 +46,6 @@ class LFSLosses:
 
         elif self.loss_name == "mse":
             return nn.MSELoss()
+        
+        elif self.loss_name == "multilabelsoftmargin":
+            return nn.MultiLabelSoftMarginLoss()
